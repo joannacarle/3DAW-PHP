@@ -40,12 +40,25 @@ $linhas = file_exists("perguntas.txt") ? file("perguntas.txt", FILE_IGNORE_NEW_L
             <td><?= htmlspecialchars($tipo) ?></td>
             <td class="acoes">
                 <a href="editarperguntas.php?id=<?= $id ?>" class="btn">Editar</a>
-                <a href="excluirperguntas.php?id=<?= $id ?>" class="btn-danger">Excluir</a>
+                <a href="excluirperguntas.php?id=<?= $id ?>" class="btn-danger" onclick="return confirmarExclusao('<?= htmlspecialchars($pergunta) ?>')">Excluir</a>
             </td>
         </tr>
         
         <?php endforeach; ?>
        </table>
 </div>
+
+<script>
+function confirmarExclusao(pergunta){
+
+    return confirm(
+        "Deseja realmente excluir a pergunta:\n\n" +
+        pergunta +
+        "\n\nEsta ação não poderá ser desfeita."
+    );
+
+}
+</script>
+
 </body>
 </html>
