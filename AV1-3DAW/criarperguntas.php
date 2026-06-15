@@ -31,7 +31,7 @@ if ($_POST) {
 
 <h2>Nova Pergunta</h2>
 
-<form method="POST" onsubmit="return validarPergunta()">
+<form method="POST">
 
 <label>Tipo de Pergunta</label>
 <select name="tipo" id="tipo" onchange="toggleCampos()">
@@ -85,36 +85,4 @@ function toggleCampos() {
         texto.style.display = "block";
     }
 }
-
-function validarPergunta(){
-
-var pergunta =
-    document.querySelector('[name="pergunta"]').value.trim();
-
-var tipo =
-    document.getElementById("tipo").value;
-
-if(pergunta === ""){
-
-    alert("Digite uma pergunta.");
-    return false;
-}
-
-if(tipo === "multipla"){
-
-    var r1 =
-        document.querySelector('[name="r1"]').value.trim();
-    var r2 =
-        document.querySelector('[name="r2"]').value.trim();
-    var r3 =
-        document.querySelector('[name="r3"]').value.trim();
-    if(r1 === "" || r2 === "" || r3 === ""){
-        alert("Preencha todas as alternativas.");
-        return false;
-    }
-}
-
-return true;
-}
-
 </script>
