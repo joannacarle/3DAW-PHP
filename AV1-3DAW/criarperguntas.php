@@ -33,56 +33,24 @@ if ($_POST) {
 
 <form method="POST">
 
-<label>Tipo de Pergunta</label>
-<select name="tipo" id="tipo" onchange="toggleCampos()">
-    <option value="multipla">Múltipla escolha</option>
-    <option value="texto">Resposta em texto</option>
+<select name="tipo">
+<option value="multipla">Múltipla</option>
+<option value="texto">Texto</option>
 </select>
 
-<label>Pergunta</label>
-<input name="pergunta" placeholder="Digite a pergunta" required>
+<input name="pergunta" placeholder="Pergunta">
 
-<div id="campoMultipla">
+<h4>Múltipla</h4>
+<input name="r1">
+<input name="r2">
+<input name="r3">
+<input name="correta" placeholder="Correta">
 
-<h4>Alternativas</h4>
-
-<input name="r1" placeholder="Alternativa A">
-<input name="r2" placeholder="Alternativa B">
-<input name="r3" placeholder="Alternativa C">
-
-<input name="correta" placeholder="Resposta correta (ex: A ou texto)">
-
-</div>
-
-<div id="campoTexto" style="display:none;">
-
-<h4>Resposta esperada</h4>
-
-<input name="texto" placeholder="Digite a resposta correta">
-
-</div>
+<h4>Texto</h4>
+<input name="texto">
 
 <button class="btn">Salvar</button>
-
-<a href="index.php" class="btn-secondary">Cancelar</a>
 
 </form>
 
 </div>
-
-<script>
-function toggleCampos() {
-    let tipo = document.getElementById("tipo").value;
-
-    let multipla = document.getElementById("campoMultipla");
-    let texto = document.getElementById("campoTexto");
-
-    if (tipo === "multipla") {
-        multipla.style.display = "block";
-        texto.style.display = "none";
-    } else {
-        multipla.style.display = "none";
-        texto.style.display = "block";
-    }
-}
-</script>
