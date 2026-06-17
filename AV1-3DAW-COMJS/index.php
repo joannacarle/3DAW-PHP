@@ -1,7 +1,14 @@
 <?php
 session_start();
-if (!isset($_SESSION["logado"])) header("Location: login.php");
-$linhas = file_exists("perguntas.txt") ? file("perguntas.txt", FILE_IGNORE_NEW_LINES) : [];
+if (!isset($_SESSION["logado"])) { 
+    header("Location: login.php");
+    exit();
+}
+
+$jsonFile = "perguntas.json";
+$perguntas = file_exists($jsonFile) ? json_decode(file_get_contents($jsonFile), true) : [];
+if (!is_array($perguntas)) $perguntas = [];
+
 ?>
 
 <!DOCTYPE html>
@@ -25,34 +32,26 @@ $linhas = file_exists("perguntas.txt") ? file("perguntas.txt", FILE_IGNORE_NEW_L
                 <th>Tipo</th>
                 <th>Ações</th>
             </tr>
-           <?php foreach ($linhas as $linha): 
-           $dados = explode("|", $linha);
-           
-           if (count($dados) < 3) continue;
-           $id = $dados[0];
-           $tipo = $dados[1];
-           $pergunta = $dados[2];
-           ?>
-
-        <tr>
-            <td><?= htmlspecialchars($id) ?></td>
-            <td><?= htmlspecialchars($pergunta) ?></td>
-            <td><?= htmlspecialchars($tipo) ?></td>
-            <td class="acoes">
-                <a href="editarperguntas.php?id=<?= $id ?>" class="btn">Editar</a>
-                <a href="excluirperguntas.php?id=<?= $id ?>"
-                    class="btn-danger"
-                    onclick="return confirmarExclusao('<?= htmlspecialchars($pergunta) ?>')">
-                    Excluir
-                </a>
-            </td>
-        </tr>
-        
+           <?php foreach ($perguntas as $p): ?>
+            <tr>
+                <td><?= htmlspecialchars($p['id']) ?></td>
+                <td><?= htmlspecialchars($p['pergunta']) ?></td>
+                <td><?= htmlspecialchars($p['tipo'] === 'multipla' ? 'Múltipla Escolha' : 'Texto') ?></td>
+                <td class="acoes">
+                    <a href="editarperguntas.php?id=<?= $p['id'] ?>" class="btn">Editar</a>
+                    <a href="excluirperguntas.php?id=<?= $p['id'] ?>"
+                        class="btn-danger"
+                        onclick="return confirmarExclusao('<?= htmlspecialchars($p['pergunta'], ENT_QUOTES) ?>')">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
         <?php endforeach; ?>
-       </table>
+    </table>
 </div>
-    <script>
-    function confirmarExclusao(pergunta){
+
+<script>
+function confirmarExclusao(pergunta){
 
     return confirm(
         "Deseja realmente excluir a pergunta:\n\n" +
