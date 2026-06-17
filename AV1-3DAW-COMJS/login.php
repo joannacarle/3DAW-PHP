@@ -5,18 +5,20 @@ $erro = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuarioDigitado = $_POST['usuario']; 
     $senhaDigitada = $_POST['senha'];
-    $fileName = "usuarios.txt";
+    $jsonFile = "usuarios.json";
     
-    if (file_exists($fileName)) {
-        $linhas = file($fileName, FILE_IGNORE_NEW_LINES);
-        foreach ($linhas as $linha) {
-            list($user, $pass) = explode(";", trim($linha));
-            
-            if ($usuarioDigitado == $user && $senhaDigitada == $pass) {
-                $_SESSION["logado"] = true;
-                $_SESSION["usuario"] = $user;
-                header("Location: menu.php");
-                exit();
+    if (file_exists($jsonFile)) {
+        $usuarios = json_decode(file_get_contents($jsonFile), true);
+        $autenticado = false;
+
+        if (is_array($usuarios)) {
+            foreach ($usuarios as $usuario) {
+                if ($usuario['usuario'] === $usuarioDigitado && $usuario['senha'] === $senhaDigitada) {
+                    $_SESSION["logado"] = true;
+                    $_SESSION["usuario"] = $usuario['usuario'];
+                    header("Location: menu.php");
+                    exit();
+                }
             }
         }
         $erro = "Usuário ou senha incorretos!";
@@ -45,5 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </body>
 </html>
+
 
 
