@@ -1,20 +1,28 @@
 <?php
 session_start();
-if (!isset($_SESSION["logado"])) header("Location: login.php");
+if (!isset($_SESSION["logado"])) {
+    header("Location: login.php");
+    exit();
+}
 
-$fileName = "perguntas.txt";
-$id_busca = $_GET["id"] ?? null;
-$linhas = file_exists($fileName) ? file($fileName, FILE_IGNORE_NEW_LINES) : [];
+$jsonFile = "perguntas.json";
+$id_busca = isset($_GET["id"]) ? (int)$_GET["id"] : null;
+$perguntas = file_exists($jsonFile) ? json_decode(file_get_contents($jsonFile), true) : [];
+
 $indice_encontrado = -1;
-$dados_pergunta = [];
+$dados_pergunta = null;
 
-foreach ($linhas as $i => $linha) {
-    $colunas = explode("|", $linha);
-    if ($colunas[0] == $id_busca) {
+foreach ($perguntas as $i => $p) {
+    if ($p['id'] === $id_busca) {
         $indice_encontrado = $i;
-        $dados_pergunta = $colunas;
+        $dados_pergunta = $p;
         break;
     }
+}
+
+if (!$dados_pergunta) {
+    header("Location: index.php");
+    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -22,23 +30,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pergunta = $_POST["pergunta"];
     
     if ($tipo == "multipla") {
-        $respostas = $_POST["r1"].";".$_POST["r2"].";".$_POST["r3"];
-        $correta = $_POST["correta"];
+        $respostas = [$_POST["r1"], $_POST["r2"], $_POST["r3"]];
+        $correta = trim($_POST["correta"]);
     } else {
-        $respostas = "";
-        $correta = $_POST["texto"];
+        $respostas = [];
+        $correta = trim($_POST["texto"]);
     }
 
-    $nova_linha = "$id_busca|$tipo|$pergunta|$respostas|$correta";
+    $perguntas[$indice_encontrado] = [
+        "id" => $id_busca,
+        "tipo" => $tipo,
+        "pergunta" => $pergunta,
+        "respostas" => $respostas,
+        "correta" => $correta
+    ];
     
-    if ($indice_encontrado !== -1) {
-        $linhas[$indice_encontrado] = $nova_linha;
-        file_put_contents($fileName, implode("\n", $linhas) . "\n");
-    }
+    file_put_contents($jsonFile, json_encode($perguntas, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     header("Location: index.php");
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -50,20 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="container">
         <h2>Editar Pergunta ID: <?= $id_busca ?></h2>
         <form method="POST">
-            <input type="hidden" name="tipo" value="<?= $dados_pergunta[1] ?>">
+           <input type="hidden" name="tipo" value="<?= $dados_pergunta['tipo'] ?>">
             <label>Pergunta:</label>
-            <input type="text" name="pergunta" value="<?= $dados_pergunta[2] ?>" required>
+            <input type="text" name="pergunta" value="<?= htmlspecialchars($dados_pergunta['pergunta']) ?>" required>
             
-            <?php if ($dados_pergunta[1] == "multipla"): 
-                $alts = explode(";", $dados_pergunta[3]); ?>
-                <input type="text" name="r1" value="<?= $alts[0] ?? '' ?>" placeholder="Opção 1">
-                <input type="text" name="r2" value="<?= $alts[1] ?? '' ?>" placeholder="Opção 2">
-                <input type="text" name="r3" value="<?= $alts[2] ?? '' ?>" placeholder="Opção 3">
+            <?php if ($dados_pergunta['tipo'] == "multipla"): ?>
+                <input type="text" name="r1" value="<?= htmlspecialchars($dados_pergunta['respostas'][0] ?? '') ?>" placeholder="Opção 1" required>
+                <input type="text" name="r2" value="<?= htmlspecialchars($dados_pergunta['respostas'][1] ?? '') ?>" placeholder="Opção 2" required>
+                <input type="text" name="r3" value="<?= htmlspecialchars($dados_pergunta['respostas'][2] ?? '') ?>" placeholder="Opção 3" required>
                 <label>Letra Correta:</label>
-                <input type="text" name="correta" value="<?= $dados_pergunta[4] ?>">
+                <input type="text" name="correta" value="<?= htmlspecialchars($dados_pergunta['correta']) ?>" required>
             <?php else: ?>
                 <label>Resposta Esperada:</label>
-                <textarea name="texto"><?= $dados_pergunta[4] ?></textarea>
+                <textarea name="texto" required style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;"><?= htmlspecialchars($dados_pergunta['correta']) ?></textarea>
             <?php endif; ?>
             
             <button type="submit" class="btn">Salvar Alterações</button>
