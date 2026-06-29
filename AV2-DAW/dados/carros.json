@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "nome": "Fiat Mobi",
+    "marca": "Fiat",
+    "tipo": "Hatch",
+    "subtipo": "Hatchback Subcompacto",
+    "diaria": 98.84,
+    "cambio": "Manual",
+    "tipo_combustivel": "Flex",
+    "caracteristicas": ["Ar Condicionado"],
+    "imagem": "https://images.fiat.com.br/content/dam/fiat/products/119/v2/home/mobi.png"
+  },
+
+  {
+    "id": 2,
+    "nome": "Volkswagen Track",
+    "marca": "Volkswagen",
+    "tipo": "Hatch",
+    "subtipo": "Hatchback Compacto",
+    "diaria": 153.87,
+    "cambio": "Manual",
+    "tipo_combustivel": "Gasolina",
+    "caracteristicas": ["Ar Condicionado"],
+    "imagem": "https://www.vw.com.br/content/dam/vwnew/brand_experience/pc/model-galleries/polo-track/polo-track-front.png"
+    },
+    
+  {
+    "id": 3,
+    "nome": "Chevrolet Onix",
+    "marca": "Chevrolet",
+    "tipo": "Hatch",
+    "subtipo": "Hatchback Compacto",
+    "diaria": 172.64,
+    "cambio": "Automático",
+    "tipo_combustivel": "Flex",
+    "caracteristicas": ["Ar Condicionado"],
+    "imagem": "https://www.chevrolet.com.br/content/dam/chevrolet/mercosur/brazil/portuguese/index/cars/cars-subbrand/onix-hatch-compromisso.png"
+  }
+
+]
